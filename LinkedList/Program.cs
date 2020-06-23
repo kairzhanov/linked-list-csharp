@@ -15,6 +15,9 @@ namespace LinkedList
             linkedList.Insert(0, 1);
             linkedList.Insert(2, 2);
             linkedList.Insert(6, 3);
+            int number = linkedList.GetAt(3);
+            Console.WriteLine(number.ToString());
+            linkedList.DeleteAt(3);
 
 
             linkedList.Pop();
@@ -42,10 +45,15 @@ namespace LinkedList
 
     internal class LinkedList<T>
     {
-        int size { get; set; }
-        internal Node<T> head;
-        internal Node<T> tail;
+        private int size;
+        public int Size {
+            get
+            {
+                return size;
+            }
+        }
 
+        internal Node<T> head;
         
         public LinkedList() {
             this.size = 0;
@@ -71,10 +79,10 @@ namespace LinkedList
             this.size++;
         }
 
-        public Node<T> Pop() {
+        public T Pop() {
             if (this.size == 0)
             {
-                return null;
+                return default(T);
             }
             else
             {
@@ -92,7 +100,7 @@ namespace LinkedList
                     this.head = null;
                 }
                 this.size--;
-                return popNode;
+                return popNode.data;
             }
         }
 
@@ -103,12 +111,12 @@ namespace LinkedList
                 Console.WriteLine("Segmentation fault: index cannot be larger than size of LinkedList.");
                 return;
             }
-            else if (index < 0)
+            if (index < 0)
             {
                 Console.WriteLine("Segmentation fault: index cannot be less than zero.");
                 return;
             }
-            else if (this.head == null)
+            if (this.head == null)
             {
                 Node<T> node = new Node<T>(data);
                 this.head = node;
@@ -138,6 +146,51 @@ namespace LinkedList
                     this.head = newNode;
                 }
                 this.size++;
+            }
+        }
+
+        private Node<T> GetNodeAt(int index)
+        {
+            if (index >= size)
+            {
+                Console.WriteLine("Segmentation fault: index cannot be larger than size of LinkedList.");
+                return null;
+            }
+            if (index < 0)
+            {
+                Console.WriteLine("Segmentation fault: index cannot be less than zero.");
+                return null;
+            }
+            Node<T> nextNode = this.head;
+            while (index > 0)
+            {
+                nextNode = nextNode.next;
+                index--;
+            }
+            return nextNode;
+        }
+
+
+        public T GetAt(int index)
+        {
+            Node<T> node = this.GetNodeAt(index);
+            if (node != null)
+                return node.data;
+            return default(T);
+        }
+
+        public void DeleteAt(int index)
+        {
+            Node<T> node = this.GetNodeAt(index);
+            if (node != null)
+            {
+                Node<T> prevNode = node.prev;
+                Node<T> nextNode = node.next;
+                node.next = null;
+                node.prev = null;
+                prevNode.next = nextNode;
+                nextNode.prev = prevNode;
+                this.size--;
             }
         }
 
