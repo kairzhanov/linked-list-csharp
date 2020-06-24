@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace LinkedList
 {
@@ -24,6 +25,10 @@ namespace LinkedList
             linkedList.Print();
             linkedList.Print(true);
 
+            foreach (object elem in linkedList) {
+                Console.WriteLine(elem.ToString());
+            }
+
             Console.ReadKey();
         }
     }
@@ -43,7 +48,7 @@ namespace LinkedList
 
     }
 
-    internal class LinkedList<T>
+    internal class LinkedList<T> : IEnumerator, IEnumerable
     {
         private int size;
         public int Size {
@@ -53,8 +58,9 @@ namespace LinkedList
             }
         }
 
-        internal Node<T> head;
-        
+        public Node<T> head;
+        int position = -1;
+
         public LinkedList() {
             this.size = 0;
             this.head = null;
@@ -170,7 +176,6 @@ namespace LinkedList
             return nextNode;
         }
 
-
         public T GetAt(int index)
         {
             Node<T> node = this.GetNodeAt(index);
@@ -193,6 +198,8 @@ namespace LinkedList
                 this.size--;
             }
         }
+
+        // PRINT - START
 
         public void Print(bool reverse = false)
         {
@@ -220,5 +227,37 @@ namespace LinkedList
 
             return;
         }
+
+        // PRINT - END
+
+        // FOREACH IMPLEMENTATION - START
+
+        public IEnumerator GetEnumerator()
+        {
+            return (IEnumerator)this;
+        }
+
+        public bool MoveNext()
+        {
+            this.position++;
+            return (this.position < this.size);
+        }
+
+        public void Reset()
+        {
+            this.position = 0;
+        }
+
+        public object Current
+        {
+            get
+            {
+                return GetAt(position);
+            }
+        }
+
+        //END
+
+
     }
 }
