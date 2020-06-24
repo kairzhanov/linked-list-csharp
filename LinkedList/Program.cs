@@ -29,6 +29,12 @@ namespace LinkedList
                 Console.WriteLine(elem.ToString());
             }
 
+            LinkedList<int> newList = linkedList.Where(i => i > 10).Select(i => i * i).Reverse();
+            LinkedList<int> newList2 = linkedList.Where(i => i > 10).Select(i => i * i);
+
+            newList.Print();
+            newList2.Print();
+
             Console.ReadKey();
         }
     }
@@ -256,8 +262,90 @@ namespace LinkedList
             }
         }
 
-        //END
+        // END
 
+        // LINQ - START
+
+
+        // Where: определяет фильтр выборки
+        public LinkedList<T> Where(Func<T, bool> condition)
+        {
+            LinkedList<T> newList = new LinkedList<T>();
+            Node<T> nextNode = this.head;
+            int i = this.size;
+            while (i > 0)
+            {
+                if (condition(nextNode.data))
+                    newList.Push(nextNode.data);
+                nextNode = nextNode.next;
+                i--;
+            }
+            return newList;
+        }
+
+        // Select: определяет проекцию выбранных значений
+        public LinkedList<T> Select(Func<T, T> operation)
+        {
+            LinkedList<T> newList = new LinkedList<T>();
+            Node<T> nextNode = this.head;
+            int i = this.size;
+            while (i > 0)
+            {
+                T newData = operation(nextNode.data);
+                newList.Push(newData);
+                nextNode = nextNode.next;
+                i--;
+            }
+            return newList;
+        }
+
+        // Reverse: располагает элементы в обратном порядке
+        public LinkedList<T> Reverse()
+        {
+            LinkedList<T> newList = new LinkedList<T>();
+            Node<T> nextNode = this.head.prev;
+            int i = this.size;
+            while (i > 0)
+            {
+                newList.Push(nextNode.data);
+                nextNode = nextNode.prev;
+                i--;
+            }
+            return newList;
+        }
+
+        // All: определяет, все ли элементы коллекции удовлятворяют определенному условию
+        public bool All(Func<T, bool> condition)
+        {
+            Node<T> nextNode = this.head;
+            int i = this.size;
+            while (i > 0)
+            {
+                if (!condition(nextNode.data))
+                    return false;
+                nextNode = nextNode.next;
+                i--;
+            }
+            return true;
+        }
+
+
+        // Any: определяет, удовлетворяет хотя бы один элемент коллекции определенному условию
+        public bool Any(Func<T, bool> condition)
+        {
+            Node<T> nextNode = this.head;
+            int i = this.size;
+            while (i > 0)
+            {
+                if (condition(nextNode.data))
+                    return true;
+                nextNode = nextNode.next;
+                i--;
+            }
+            return false;
+        }
+
+        // LINQ - END
 
     }
 }
