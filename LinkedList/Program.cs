@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace LinkedList
 {
@@ -23,11 +24,14 @@ namespace LinkedList
 
             linkedList.Pop();
             linkedList.Print();
-            linkedList.Print(true);
+            //linkedList.Print(true);
 
-            foreach (object elem in linkedList) {
-                Console.WriteLine(elem.ToString());
-            }
+            //foreach (object elem in linkedList) {
+            //    Console.WriteLine(elem.ToString());
+            //}
+
+            linkedList.QuickSort();
+            linkedList.Print();
 
             LinkedList<int> newList = linkedList.Where(i => i > 10).Select(i => i * i).Reverse();
             LinkedList<int> newList2 = linkedList.Where(i => i > 10).Select(i => i * i);
@@ -39,7 +43,7 @@ namespace LinkedList
         }
     }
 
-    internal class Node<T>
+    internal class Node<T> : IComparable<Node<T>>
     {
         internal T data;
         internal Node<T> next;
@@ -52,6 +56,32 @@ namespace LinkedList
             this.prev = null;
         }
 
+        public int CompareTo(Node<T> other)
+        {
+            if (other == null) return 1;
+
+            return Comparer<T>.Default.Compare(data, other.data);
+        }
+
+        public static bool operator >(Node<T> operand1, Node<T> operand2)
+        {
+            return operand1.CompareTo(operand2) == 1;
+        }
+
+        public static bool operator <(Node<T> operand1, Node<T> operand2)
+        {
+            return operand1.CompareTo(operand2) == -1;
+        }
+
+        public static bool operator >=(Node<T> operand1, Node<T> operand2)
+        {
+            return operand1.CompareTo(operand2) >= 0;
+        }
+
+        public static bool operator <=(Node<T> operand1, Node<T> operand2)
+        {
+            return operand1.CompareTo(operand2) <= 0;
+        }
     }
 
     internal class LinkedList<T> : IEnumerator, IEnumerable
@@ -346,6 +376,54 @@ namespace LinkedList
         }
 
         // LINQ - END
+
+
+        // QUICKSORT - START
+        private void Swap(int i, int j)
+        {
+            Node<T> node1 = this.GetNodeAt(i);
+            Node<T> node2 = this.GetNodeAt(j);
+            T temp = node1.data;
+            node1.data = node2.data;
+            node2.data = temp;
+        }
+
+        public void QuickSort()
+        {
+            QuickSort(0, size - 1);
+        }
+        
+
+        private void QuickSort(int start, int end)
+        {
+            int i;
+            if (start < end)
+            {
+                i = Partition(start, end);
+
+                QuickSort(start, i - 1);
+                QuickSort(i + 1, end);
+            }
+        }
+
+        private int Partition(int start, int end)
+        {
+            Node<T> p = this.GetNodeAt(end);
+            int i = start - 1;
+
+            for (int j = start; j <= end - 1; j++)
+            {
+                if (GetNodeAt(j) <= p)
+                {
+                    i++;
+                    Swap(i, j);
+                }
+            }
+            Swap(i + 1, end);
+            return i + 1;
+        }
+
+        // QUICKSORT - END
 
     }
 }
